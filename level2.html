@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level 2 Agent 評分標準｜Profet AI Hackathon</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Verdana', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif'],
+            title: ['Verdana', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif']
+          },
+          colors: {
+            profet: {
+              blue: '#2AACA2',
+              light: '#e5f6f5',
+              dark: '#1c7a72',
+              bg: '#f4f6f8',
+              text: '#2d3748',
+              muted: '#718096',
+              border: '#e2e8f0'
+            }
+          },
+          animation: {
+            'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+          },
+          keyframes: {
+            fadeInUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #f4f6f8; color: #2d3748; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    .enterprise-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); transition: all 0.3s ease; }
+    .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08); border-color: #2AACA2; }
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f4f6f8; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2AACA2; }
+    .score-row td { vertical-align: top; padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; line-height: 1.7; }
+    .score-row:last-child td { border-bottom: none; }
+    .score-row td:first-child { width: 20%; font-weight: 600; color: #2d3748; }
+    .score-row td:nth-child(2) { width: 44%; color: #4a5568; }
+    .score-row td:nth-child(3) { width: 22%; color: #718096; font-size: 12px; }
+    .score-row td:last-child { width: 14%; text-align: center; }
+    .qtag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-top: 5px; }
+    .principle-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .flow-step { display: flex; align-items: flex-start; gap: 16px; }
+    .flow-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+    .phase-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
+    .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 12px; border-radius: 99px; }
+    .sub-bullet { color: #718096; font-size: 12px; margin-top: 5px; line-height: 1.7; }
+    .ref-text { font-size: 11.5px; color: #718096; line-height: 1.8; }
+    .ref-text strong { color: #4a5568; }
+    .ai-tag { background: linear-gradient(135deg, #2AACA2, #1c7a72); color: white; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; display: inline-block; margin-left: 6px; vertical-align: middle; letter-spacing: 0.03em; }
+  </style>
+</head>
+<body class="selection:bg-profet-blue selection:text-white">
+
+<!-- Nav -->
+<nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-profet-border py-4 px-6 flex justify-between items-center shadow-sm">
+  <div class="flex items-center gap-3">
+    <div class="w-8 h-8 rounded bg-profet-blue flex items-center justify-center text-white font-bold text-sm">P</div>
+    <span class="font-title font-bold text-profet-text tracking-wide">Profet AI <span class="text-profet-blue">Agent Hackathon</span></span>
+  </div>
+  <div class="hidden md:flex gap-8 text-sm font-bold text-profet-muted">
+    <a href="#why" class="hover:text-profet-blue transition-colors">評分原理</a>
+    <a href="#flow" class="hover:text-profet-blue transition-colors">兩階段流程</a>
+    <a href="#semi" class="hover:text-profet-blue transition-colors">複賽標準</a>
+    <a href="#final" class="hover:text-profet-blue transition-colors">決賽標準</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="relative pt-32 pb-16 px-6 lg:px-8 bg-white border-b border-profet-border">
+  <div class="max-w-4xl mx-auto text-center">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-profet-light border border-profet-blue/20 text-profet-dark text-xs font-bold mb-6 uppercase tracking-wider">
+      <i class="fa-solid fa-robot"></i> Level 2 · AI-Native Agent 黑客松
+    </div>
+    <h1 class="text-4xl md:text-5xl font-title font-black tracking-tight mb-5 leading-tight text-profet-text">
+      Agent 評分標準<br><span class="text-profet-blue">完整說明</span>
+    </h1>
+    <p class="text-lg text-profet-muted max-w-2xl mx-auto leading-relaxed mb-10">
+      評分不是為了淘汰，而是為了確認一件事：<br>
+      <span class="text-profet-dark font-semibold">你的 Agent 真的解決了工作問題，而不只是展示品。</span>
+    </p>
+    <div class="enterprise-card p-6 max-w-3xl mx-auto text-left border-l-4 border-l-profet-blue animate-fade-in-up">
+      <div class="flex items-start gap-3">
+        <i class="fa-solid fa-lightbulb text-profet-blue text-xl mt-0.5"></i>
+        <div>
+          <p class="font-bold text-profet-text mb-1">Level 2 評分的核心問題只有一個</p>
+          <p class="text-profet-muted text-sm leading-relaxed">這個 Agent <strong class="text-profet-dark">做出來了嗎？有真的在用嗎？讓工作變好了嗎？</strong> 所有評分構面都圍繞這三個問題展開，而不是評估你的想法有多好——那是 Level 1 的事。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-5xl mx-auto px-6 py-12 space-y-20">
+
+  <!-- Section 1: 評分原理 -->
+  <section id="why" class="reveal">
+    <div class="mb-8 border-b border-profet-border pb-4">
+      <span class="text-profet-blue font-bold tracking-widest uppercase text-xs">Why We Score This Way</span>
+      <h2 class="text-2xl font-black text-profet-text mt-1">評分原理：一個好的企業 Agent 該具備什麼？</h2>
+      <p class="text-profet-muted text-sm mt-2">評分標準不是憑感覺設計的，而是來自業界對「企業級 AI Agent」的核心要求。</p>
+    </div>
+
+    <div class="enterprise-card p-6 mb-6 bg-profet-light border-profet-blue/20">
+      <p class="text-sm text-profet-dark leading-relaxed">
+        根據 MIT Sloan Management Review、Gartner 及 McKinsey 對企業 AI 導入的研究，一個真正為企業創造價值的 AI Agent，不在於技術有多複雜，而在於是否滿足以下條件：
+        <span class="font-semibold">①&nbsp;輸出可信賴且穩定、②&nbsp;有真實使用紀錄佐證、③&nbsp;讓流程產生可量化的改變、④&nbsp;能被團隊共用而非個人獨佔、⑤&nbsp;知識可沉澱傳承不因人員異動而消失。</span>
+        本次評分標準即以此五項能力為基礎設計。
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div class="enterprise-card p-5 hover-lift border-t-4 border-t-profet-blue text-center">
+        <div class="principle-icon bg-profet-light mx-auto mb-3"><i class="fa-solid fa-bullseye text-profet-blue"></i></div>
+        <p class="font-bold text-profet-text text-sm mb-1">輸出可信賴</p>
+        <p class="text-xs text-profet-muted leading-relaxed">準確、穩定、可直接使用，不需大量人工後處理</p>
+      </div>
+      <div class="enterprise-card p-5 hover-lift border-t-4 border-t-emerald-500 text-center">
+        <div class="principle-icon bg-emerald-50 mx-auto mb-3"><i class="fa-solid fa-check-double text-emerald-500"></i></div>
+        <p class="font-bold text-profet-text text-sm mb-1">真實使用佐證</p>
+        <p class="text-xs text-profet-muted leading-relaxed">有紀錄可證明 Agent 已融入日常工作，而非展示品</p>
+      </div>
+      <div class="enterprise-card p-5 hover-lift border-t-4 border-t-violet-500 text-center">
+        <div class="principle-icon bg-violet-50 mx-auto mb-3"><i class="fa-solid fa-chart-line text-violet-500"></i></div>
+        <p class="font-bold text-profet-text text-sm mb-1">流程可量化改善</p>
+        <p class="text-xs text-profet-muted leading-relaxed">有具體數字說明改善了什麼，而非「感覺比較快」</p>
+      </div>
+      <div class="enterprise-card p-5 hover-lift border-t-4 border-t-amber-500 text-center">
+        <div class="principle-icon bg-amber-50 mx-auto mb-3"><i class="fa-solid fa-users text-amber-500"></i></div>
+        <p class="font-bold text-profet-text text-sm mb-1">團隊共用性</p>
+        <p class="text-xs text-profet-muted leading-relaxed">不只作者會用，同仁也能獨立上手操作</p>
+      </div>
+      <div class="enterprise-card p-5 hover-lift border-t-4 border-t-rose-500 text-center">
+        <div class="principle-icon bg-rose-50 mx-auto mb-3"><i class="fa-solid fa-book text-rose-500"></i></div>
+        <p class="font-bold text-profet-text text-sm mb-1">知識可傳承</p>
+        <p class="text-xs text-profet-muted leading-relaxed">設計邏輯有文件化，不因人員異動而消失</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: 兩階段流程 -->
+  <section id="flow" class="reveal">
+    <div class="mb-8 border-b border-profet-border pb-4">
+      <span class="text-profet-blue font-bold tracking-widest uppercase text-xs">Two-Stage Process</span>
+      <h2 class="text-2xl font-black text-profet-text mt-1">兩階段流程與篩選機制</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <!-- 複賽 -->
+      <div class="enterprise-card p-6 border-l-4 border-l-profet-blue">
+        <div class="flex items-center justify-between mb-4">
+          <span class="phase-pill bg-profet-light text-profet-dark border border-profet-blue/20">
+            <i class="fa-solid fa-filter text-profet-blue"></i> 複賽
+          </span>
+          <span class="badge bg-profet-light text-profet-dark text-xs">CoE 審查</span>
+        </div>
+        <h3 class="font-bold text-profet-text text-lg mb-3">繳交簡報 + Agent</h3>
+        <div class="space-y-2 mb-4">
+          <div class="flow-step">
+            <div class="flow-num bg-profet-light text-profet-dark text-xs">1</div>
+            <p class="text-sm text-profet-muted">繳交 Agent 實操、Demo 影片、簡報（7/3 截止）</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num bg-profet-light text-profet-dark text-xs">2</div>
+            <p class="text-sm text-profet-muted">CoE 閱覽簡報並實際操作 Agent 進行評分</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num bg-profet-light text-profet-dark text-xs">3</div>
+            <p class="text-sm text-profet-muted">依 Agent 總分排序，選出分數最高者進入決賽</p>
+          </div>
+        </div>
+        <div class="bg-profet-light rounded-lg p-3 flex items-center gap-3">
+          <i class="fa-solid fa-user-group text-profet-blue text-lg"></i>
+          <div>
+            <p class="text-xs text-profet-muted">進入決賽人數</p>
+            <p class="font-black text-profet-blue text-xl">10 – 15 名</p>
+          </div>
+        </div>
+        <p class="text-xs text-profet-muted mt-3">※ 初審只要有繳交即視為通過 Level 2，不影響認證資格。<br>※ 部門平均分數另計算部門獎金資格。</p>
+      </div>
+
+      <!-- 決賽 -->
+      <div class="enterprise-card p-6 border-l-4 border-l-violet-500">
+        <div class="flex items-center justify-between mb-4">
+          <span class="phase-pill bg-violet-50 text-violet-700 border border-violet-200">
+            <i class="fa-solid fa-trophy text-violet-500"></i> 決賽
+          </span>
+          <span class="badge bg-violet-50 text-violet-700 text-xs">高層評審</span>
+        </div>
+        <h3 class="font-bold text-profet-text text-lg mb-3">預錄影片現場發表</h3>
+        <div class="space-y-2 mb-4">
+          <div class="flow-step">
+            <div class="flow-num bg-violet-50 text-violet-700 text-xs">1</div>
+            <p class="text-sm text-profet-muted">7/17（五）下午進行現場發表</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num bg-violet-50 text-violet-700 text-xs">2</div>
+            <p class="text-sm text-profet-muted">以<strong class="text-profet-text">預錄影片</strong>呈現 Agent 真實運作場景</p>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num bg-violet-50 text-violet-700 text-xs">3</div>
+            <p class="text-sm text-profet-muted">評審依影片與簡報給分，選出前三名</p>
+          </div>
+        </div>
+        <div class="bg-violet-50 rounded-lg p-3 flex items-center gap-3">
+          <i class="fa-solid fa-medal text-violet-500 text-lg"></i>
+          <div>
+            <p class="text-xs text-profet-muted">個人獎金得獎人數</p>
+            <p class="font-black text-violet-600 text-xl">前 3 名</p>
+          </div>
+        </div>
+        <p class="text-xs text-profet-muted mt-3">※ 評審建議：CEO / C-level 1 名 ＋ 主管代表 2 名。<br>※ 預錄影片，發表當天不現場操作 Agent。</p>
+      </div>
+    </div>
+
+    <!-- 評分視角差異說明 -->
+    <div class="enterprise-card p-6 bg-white">
+      <h3 class="font-bold text-profet-text mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-eye text-profet-blue"></i> 兩階段的評審視角差異
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-profet-light rounded-lg p-4">
+          <p class="text-xs font-bold text-profet-dark uppercase tracking-wider mb-2">複賽｜CoE 主管視角</p>
+          <p class="text-sm text-profet-dark leading-relaxed">關注<strong>執行品質與落地細節</strong>——Agent 做出來好不好、跑得穩不穩、有沒有真的在用、別人能不能接手。</p>
+        </div>
+        <div class="bg-violet-50 rounded-lg p-4">
+          <p class="text-xs font-bold text-violet-700 uppercase tracking-wider mb-2">決賽｜老闆視角</p>
+          <p class="text-sm text-violet-800 leading-relaxed">關注<strong>商業價值與組織影響力</strong>——這個 Agent 值不值得投資、有沒有讓團隊受益、能不能為組織留下知識資產。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: 複賽評分標準 -->
+  <section id="semi" class="reveal">
+    <div class="mb-8 border-b border-profet-border pb-4">
+      <span class="text-profet-blue font-bold tracking-widest uppercase text-xs">Semi-Final Scoring</span>
+      <h2 class="text-2xl font-black text-profet-text mt-1">
+        複賽評分標準
+        <span class="ai-tag"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI 評分輔助</span>
+      </h2>
+      <p class="text-profet-muted text-sm mt-2">CoE 將使用 AI 工具輔助評分，依據以下五項構面對每份繳交的簡報與 Agent 進行系統性評估，確保評分一致性。</p>
+    </div>
+
+    <div class="enterprise-card p-5 mb-6 border border-profet-blue/20 bg-profet-light">
+      <div class="flex items-start gap-3">
+        <i class="fa-solid fa-wand-magic-sparkles text-profet-blue text-lg mt-0.5"></i>
+        <div>
+          <p class="font-bold text-profet-dark text-sm mb-1">AI 評分說明</p>
+          <p class="text-xs text-profet-dark/80 leading-relaxed">CoE 將建立結構化評分 Agent，依下列五項構面的評分標準，對每份繳交內容進行初步評分並產出評分報告，再由 CoE 人工複核確認。此機制確保 90 份以上的繳交內容能在一致標準下被公平評估。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="enterprise-card overflow-hidden">
+      <div class="bg-profet-blue px-5 py-3 flex items-center justify-between">
+        <p class="text-white font-bold text-sm">評分構面 · 共 5 項</p>
+        <p class="text-profet-light/80 text-xs">每項 20 分，滿分 100 分</p>
+      </div>
+      <table class="w-full">
+        <thead>
+          <tr class="bg-gray-50 border-b border-profet-border">
+            <th class="text-left px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:20%">評分構面</th>
+            <th class="text-left px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:46%">CoE 審查重點</th>
+            <th class="text-left px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:22%">給分參考</th>
+            <th class="text-center px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:12%">配分</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-profet-light text-profet-blue flex items-center justify-center text-xs font-bold flex-shrink-0">1</span><span>輸出準確性</span></div>
+              <div class="qtag bg-profet-light text-profet-dark">這個輸出能直接用嗎？</div>
+            </td>
+            <td>
+              CoE 依 Agent Card 使用情境輸入測試案例，觀察實際輸出
+              <div class="sub-bullet">· 回應內容是否正確且完整，無明顯錯誤<br>· 輸出格式是否符合實際工作使用需求<br>· 輸出是否可直接使用，或需大量後處理</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：準確完整，可直接使用<br>
+              <strong>11–17</strong>：大致正確，需少量修改<br>
+              <strong>0–10</strong>：錯誤明顯或需大量後處理
+            </td>
+            <td class="text-center"><span class="badge bg-profet-light text-profet-dark font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-profet-light text-profet-blue flex items-center justify-center text-xs font-bold flex-shrink-0">2</span><span>執行穩定性</span></div>
+              <div class="qtag bg-profet-light text-profet-dark">每次跑都一樣嗎？</div>
+            </td>
+            <td>
+              CoE 重複操作 Agent 並比對繳交之驗證紀錄（至少 3 次）
+              <div class="sub-bullet">· 相同輸入多次執行，核心輸出是否一致<br>· 非預期輸入時是否有合理的回應或邊界提示<br>· 驗證紀錄是否呈現不同情境皆可正常運作</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：多次執行高度一致，邊界處理佳<br>
+              <strong>11–17</strong>：大致穩定，偶有差異但可接受<br>
+              <strong>0–10</strong>：結果飄移明顯或驗證不足
+            </td>
+            <td class="text-center"><span class="badge bg-profet-light text-profet-dark font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-profet-light text-profet-blue flex items-center justify-center text-xs font-bold flex-shrink-0">3</span><span>真實使用紀錄</span></div>
+              <div class="qtag bg-profet-light text-profet-dark">這是平常在用的嗎？</div>
+            </td>
+            <td>
+              簡報或附件中須呈現來自真實工作的使用紀錄
+              <div class="sub-bullet">· 對話紀錄或截圖是否來自真實工作情境（非刻意設計）<br>· 是否呈現使用頻率或使用次數<br>· 輸出是否已實際用於工作產出</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：有明確使用紀錄，持續在用中<br>
+              <strong>11–17</strong>：少量紀錄或仍在測試階段<br>
+              <strong>0–10</strong>：僅展示案例，無實際使用證明
+            </td>
+            <td class="text-center"><span class="badge bg-profet-light text-profet-dark font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-profet-light text-profet-blue flex items-center justify-center text-xs font-bold flex-shrink-0">4</span><span>流程改善的具體性</span></div>
+              <div class="qtag bg-profet-light text-profet-dark">Before/After 的差距是真的嗎？</div>
+            </td>
+            <td>
+              不評估「是否有改善潛力」（Level 1 已評），改評「實際改善了多少」
+              <div class="sub-bullet">· 哪些人工步驟被 Agent 取代或簡化（需明確列出）<br>· 時間節省或品質提升是否有具體數字<br>· 數字是否有可對比的基準，非主觀描述</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：改善步驟明確，數字具體可信<br>
+              <strong>11–17</strong>：有改善但數字薄弱或估算模糊<br>
+              <strong>0–10</strong>：改善不明確或沿用 Level 1 規劃內容
+            </td>
+            <td class="text-center"><span class="badge bg-profet-light text-profet-dark font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-profet-light text-profet-blue flex items-center justify-center text-xs font-bold flex-shrink-0">5</span><span>團隊可移交性</span></div>
+              <div class="qtag bg-profet-light text-profet-dark">這個人不在，還能用嗎？</div>
+            </td>
+            <td>
+              CoE 以「第一次使用者」視角操作，不看任何額外說明
+              <div class="sub-bullet">· 命名與功能描述是否讓陌生使用者看得懂<br>· 是否有使用提示或限制說明內建在 Agent 中<br>· 不具備技術背景的同仁是否也能正確操作</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：陌生使用者可完全自行上手<br>
+              <strong>11–17</strong>：需簡短說明才能使用<br>
+              <strong>0–10</strong>：高度依賴原作者，無法獨立使用
+            </td>
+            <td class="text-center"><span class="badge bg-profet-light text-profet-dark font-bold">20 分</span></td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td colspan="3" class="px-4 py-3 font-bold text-profet-text text-sm">複賽 Agent 總分</td>
+            <td class="text-center px-4 py-3"><span class="badge bg-profet-blue text-white font-bold">100 分</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-profet-muted mt-3 pl-1">※ 部門平均分數＝部門 Agent 總得分 ÷ 部門人數，用於部門獎金計算。AIS Team 分台北／高雄；Marketing+ESD+UX、Presales+Tiger+CN Tech、Finance+HR 各視為同一部門。</p>
+  </section>
+
+  <!-- Section 4: 決賽評分標準 -->
+  <section id="final" class="reveal">
+    <div class="mb-8 border-b border-profet-border pb-4">
+      <span class="text-violet-500 font-bold tracking-widest uppercase text-xs">Final Scoring</span>
+      <h2 class="text-2xl font-black text-profet-text mt-1">決賽評分標準</h2>
+      <p class="text-profet-muted text-sm mt-2">高層評審依預錄影片與簡報，從老闆視角評估 Agent 的商業價值與組織影響力。</p>
+    </div>
+
+    <div class="enterprise-card overflow-hidden">
+      <div class="bg-violet-600 px-5 py-3 flex items-center justify-between">
+        <p class="text-white font-bold text-sm">評分構面 · 共 5 項</p>
+        <p class="text-violet-200 text-xs">每項 20 分，滿分 100 分</p>
+      </div>
+      <table class="w-full">
+        <thead>
+          <tr class="bg-gray-50 border-b border-profet-border">
+            <th class="text-left px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:20%">評分構面</th>
+            <th class="text-left px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:46%">高層評審重點</th>
+            <th class="text-left px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:22%">給分參考</th>
+            <th class="text-center px-4 py-3 text-xs font-bold text-profet-muted uppercase tracking-wider" style="width:12%">配分</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span><span>商業價值清晰度</span></div>
+              <div class="qtag bg-violet-50 text-violet-700">這幫公司省了什麼？</div>
+            </td>
+            <td>
+              影片中是否以非技術語言清楚陳述 Agent 對公司的貢獻
+              <div class="sub-bullet">· 價值陳述是否簡潔有力，不需背景知識即可理解<br>· 是否以部門或公司層級說明貢獻（非純個人視角）<br>· 數字是否讓人一聽就有感（如：省下每週 X 小時）</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：價值一目瞭然，數字有感<br>
+              <strong>11–17</strong>：方向正確但陳述需要解釋<br>
+              <strong>0–10</strong>：價值不明確或充斥技術術語
+            </td>
+            <td class="text-center"><span class="badge bg-violet-50 text-violet-700 font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span><span>真實場景說服力</span></div>
+              <div class="qtag bg-violet-50 text-violet-700">這是真的在跑，還是今天才用？</div>
+            </td>
+            <td>
+              影片是否讓評審感受到 Agent 已深度融入日常工作
+              <div class="sub-bullet">· 影片輸入是否來自真實工作內容（非虛構範例）<br>· 輸出是否直接對應真實工作產出<br>· 影片呈現的使用方式是否自然，而非照稿演示</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：場景完全真實，融入日常<br>
+              <strong>11–17</strong>：部分真實，仍有展示痕跡<br>
+              <strong>0–10</strong>：明顯為發表設計，缺乏真實感
+            </td>
+            <td class="text-center"><span class="badge bg-violet-50 text-violet-700 font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span><span>可量化的改善成果</span></div>
+              <div class="qtag bg-violet-50 text-violet-700">這個投入值得嗎？</div>
+            </td>
+            <td>
+              複賽已審數字合理性，決賽進一步評估數字的說服力與可信度
+              <div class="sub-bullet">· 數字是否有明確來源與計算邏輯<br>· 改善是否持續發生，而非一次性效益<br>· 是否能讓高層判斷「值不值得持續投入」</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：數字有據，持續改善，具說服力<br>
+              <strong>11–17</strong>：數字合理但深度稍不足<br>
+              <strong>0–10</strong>：數字模糊或僅重複 Level 1 預估
+            </td>
+            <td class="text-center"><span class="badge bg-violet-50 text-violet-700 font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span><span>組織影響力</span></div>
+              <div class="qtag bg-violet-50 text-violet-700">只有一個人在用嗎？</div>
+            </td>
+            <td>
+              影片或簡報中是否呈現 Agent 對團隊或部門層級的實際影響
+              <div class="sub-bullet">· 是否有其他成員也在使用（自然採用，非被要求）<br>· 是否解決了整個部門的共同痛點，而非純個人需求<br>· 影響範圍是否正在擴大，有擴散趨勢</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：團隊已受益，自然擴散中<br>
+              <strong>11–17</strong>：部分成員受益，仍以個人為主<br>
+              <strong>0–10</strong>：影響範圍僅限個人
+            </td>
+            <td class="text-center"><span class="badge bg-violet-50 text-violet-700 font-bold">20 分</span></td>
+          </tr>
+          <tr class="score-row">
+            <td>
+              <div class="flex items-center gap-2 mb-1"><span class="w-5 h-5 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-xs font-bold flex-shrink-0">5</span><span>知識沉澱與傳承性</span></div>
+              <div class="qtag bg-violet-50 text-violet-700">這個知識會因人員異動消失嗎？</div>
+            </td>
+            <td>
+              不要求跨部門複製，但要求使用邏輯與操作方式有完整文件化
+              <div class="sub-bullet">· 是否有說明 Agent 的設計思路與使用限制<br>· 操作方式是否有文件記錄，新人也能接手<br>· 這個 Agent 是否為部門留下可傳承的知識資產</div>
+            </td>
+            <td class="ref-text">
+              <strong>18–20</strong>：設計邏輯與操作完整文件化<br>
+              <strong>11–17</strong>：有部分說明但不夠完整<br>
+              <strong>0–10</strong>：無文件，知識僅存於作者腦中
+            </td>
+            <td class="text-center"><span class="badge bg-violet-50 text-violet-700 font-bold">20 分</span></td>
+          </tr>
+          <tr class="bg-gray-50">
+            <td colspan="3" class="px-4 py-3 font-bold text-profet-text text-sm">決賽 Agent 總分</td>
+            <td class="text-center px-4 py-3"><span class="badge bg-violet-600 text-white font-bold">100 分</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-profet-muted mt-3 pl-1">※ 個人獎金依決賽總分排序取前三名。評審建議：CEO / C-level 1 名 ＋ 主管代表 2 名。</p>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="bg-white border-t border-profet-border py-8 text-center mt-12">
+  <div class="max-w-4xl mx-auto px-6">
+    <p class="text-sm text-profet-text font-bold mb-1">期待在 Demo Day 看到各位 Agent 真正解決工作痛點！</p>
+    <p class="text-xs text-profet-muted">Profet AI CoE Team · AI-Native Agent Hackathon 2026</p>
+  </div>
+</footer>
+
+<script>
+  function reveal() {
+    document.querySelectorAll('.reveal').forEach(el => {
+      const top = el.getBoundingClientRect().top;
+      if (top < window.innerHeight - 80) el.classList.add('active');
+    });
+  }
+  window.addEventListener('scroll', reveal);
+  document.addEventListener('DOMContentLoaded', reveal);
+</script>
+</body>
+</html>
